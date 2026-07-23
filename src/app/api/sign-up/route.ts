@@ -7,9 +7,8 @@ import { sendVerificationCode } from "@/helpers/sendVerificationEmail";
 
 
 export async function POST(request:NextRequest) {
-   
-   try {
-    await ConnectDB()
+    try {
+       await ConnectDB()
 
     const {username, email, password} = await request.json() 
 

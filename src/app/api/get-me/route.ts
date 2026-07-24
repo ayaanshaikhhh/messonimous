@@ -4,13 +4,13 @@ import ConnectDB from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
 import {User} from "next-auth"
 import mongoose from "mongoose";
-import { use } from "react";
-import { success } from "zod";
+
 
 export async function GET(request:Request) {
     await ConnectDB()
 
     const session = await getServerSession(authOptions)
+    console.log("SESSION:::::::::::::::::::::::",session);
     const user:User  = session?.user as User
 
     if(!session || !session.user){
@@ -24,7 +24,7 @@ export async function GET(request:Request) {
 
     try {
         const user = await UserModel.aggregate([
-            { $match:{ id:userID}},
+            { $match:{ _id:userID}},
             {$unwind:"$messages"},
             {$sort:{"messages.createdAt":-1}},
             {$group:{_id:"$_id", messages:{$push:"$messages"}}}

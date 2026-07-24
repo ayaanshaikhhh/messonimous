@@ -3,6 +3,7 @@ import UserModel from "@/models/User.model";
 import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { User } from '../../../../models/User.model';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,18 +12,25 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
 
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        identifier:{
+          label:"Email or Username",
+          type:"text",
+          placeholder:'Enter your email or username'
+        },
+        password:{
+          label:"Password",
+          type:"password"
+        }
       },
 
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials): Promise<any> {
         await ConnectDB();
 
         try {
           const user = await UserModel.findOne({
             $or: [
-              { username: credentials.identifier },
-              { email: credentials.identifier },
+              { username: credentials?.identifier },
+              { email: credentials?.identifier },
             ],
           });
 
@@ -34,9 +42,13 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Please verify yourself before login");
           }
 
+          if (!credentials?.identifier || !credentials?.password) {
+          throw new Error("Missing credentials");
+}
+
           // Comparing password
           const isPasswordCorrect = await bcrypt.compare(
-            credentials.password,
+            credentials?.password,
             user.password,
           );
 

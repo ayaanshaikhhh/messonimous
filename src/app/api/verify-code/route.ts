@@ -44,7 +44,7 @@ export async function POST(request:Request) {
                 message:"Verification code is invalid"
             },{status:400})
         }
-        
+    
     } catch (error) {
         console.error("Error verifying user",error)
         return Response.json({

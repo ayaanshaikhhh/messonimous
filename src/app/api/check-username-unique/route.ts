@@ -18,7 +18,7 @@ export async function GET(request:Request) {
 
         // Validate with zod
         const result = usernameValidationSchema.safeParse(queryparam);
-        console.log("RESULT OF VALIDATION",result);
+        // console.log("RESULT OF VALIDATION",result);
 
         if(!result.success){
             const errors = z.treeifyError(result.error)

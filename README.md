@@ -1,36 +1,220 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💬 Messonimous
 
-## Getting Started
+> An anonymous messaging platform built with **Next.js**, **TypeScript**, **MongoDB**, and **NextAuth**, allowing users to receive honest anonymous messages securely.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green?logo=mongodb)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styled-38BDF8?logo=tailwindcss)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+---
+
+## ✨ Features
+
+- 🔐 Secure Authentication
+- 📩 Receive anonymous messages
+- 👤 Unique username verification
+- 📧 Email verification using OTP
+- 🤖 AI-generated message suggestions
+- 🌙 Modern responsive UI
+- ⚡ Fast server-side rendering with Next.js
+- 🛡️ Input validation using Zod
+- 🍪 Secure cookie-based authentication
+- 🎨 Beautiful UI built with Tailwind CSS & shadcn/ui
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- React Hook Form
+- Zod
+
+### Backend
+
+- Next.js API Routes
+- MongoDB
+- Mongoose
+- NextAuth
+- bcryptjs
+- JWT
+- Axios
+
+### AI
+
+- Groq API (Llama Models)
+
+### Email
+
+- Resend
+
+---
+
+## 📂 Folder Structure
+
+```text
+src/
+│
+├── app/
+│   ├── api/
+│   ├── sign-in/
+│   ├── sign-up/
+│   └── verify/
+│
+├── components/
+│   ├── ui/
+│   └── shared/
+│
+├── context/
+│
+├── helpers/
+│
+├── lib/
+│
+├── models/
+│
+├── schemas/
+│
+├── types/
+│
+└── middleware.ts
+```
+
+---
+
+## 🚀 Getting Started
+
+### Clone the repository
+
+```bash
+git clone https://github.com/yourusername/messonimous.git
+```
+
+Move into the project
+
+```bash
+cd messonimous
+```
+
+Install dependencies
+
+```bash
+npm install
+```
+
+Create a `.env` file
+
+```env
+MONGODB_URI=
+
+NEXTAUTH_SECRET=
+
+NEXTAUTH_URL=http://localhost:3000
+
+RESEND_API_KEY=
+
+GROQ_API_KEY=
+```
+
+Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔑 Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Description |
+|-----------|-------------|
+| `MONGODB_URI` | MongoDB Connection String |
+| `NEXTAUTH_SECRET` | Secret for NextAuth |
+| `NEXTAUTH_URL` | Base URL |
+| `RESEND_API_KEY` | Resend Email API |
+| `GROQ_API_KEY` | Groq AI API Key |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📸 Screenshots
 
-## Deploy on Vercel
+> Add screenshots of:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Landing Page
+- Sign Up
+- Sign In
+- Dashboard
+- Anonymous Messages
+- AI Message Suggestions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🔮 Upcoming Features
+
+- ✅ Dark Mode
+- ✅ Profile Customization
+- ✅ Copy Share Link
+- ✅ Message Analytics
+- ✅ Rate Limiting
+- ✅ Spam Detection
+- ✅ Delete Messages
+- ✅ User Dashboard
+- ✅ Better AI Suggestions
+
+---
+
+## 🧠 What I Learned
+
+Building **Messonimous** helped me gain practical experience with:
+
+- Next.js App Router
+- Authentication & Authorization
+- MongoDB & Mongoose
+- Server Actions & API Routes
+- Form Validation using Zod
+- React Hook Form
+- AI API Integration
+- Email Verification Workflow
+- TypeScript Best Practices
+- Production Folder Structure
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+Feel free to fork the repository and submit a pull request.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+**Ayaan Shaikh**
+
+GitHub: https://github.com/ayaanshaikhhh
+
+LinkedIn: https://linkedin.com/in/your-linkedin
+
+---
+
+⭐ If you found this project helpful, consider giving it a star on GitHub!

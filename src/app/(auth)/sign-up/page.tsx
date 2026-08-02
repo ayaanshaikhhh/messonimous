@@ -96,7 +96,7 @@ const page = () => {
         <div className="text-center space-y-3">
           <h1 className="font-[space_grotesk] text-4xl md:text-5xl font-black tracking-tight text-slate-900">
             Join{" "}
-            <span className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
               Messonimous
             </span>
           </h1>
@@ -201,7 +201,7 @@ const page = () => {
             className="
     w-full
     rounded-xl
-    bg-gradient-to-r
+    bg-linear-to-r
     from-violet-600
     via-indigo-600
     to-blue-600

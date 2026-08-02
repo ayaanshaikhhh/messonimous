@@ -213,7 +213,7 @@ This project is licensed under the MIT License.
 
 GitHub: https://github.com/ayaanshaikhhh
 
-LinkedIn: https://linkedin.com/in/your-linkedin
+LinkedIn: linkedin.com/in/shaikh-ayaan-dev
 
 ---
 

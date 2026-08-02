@@ -149,19 +149,6 @@ http://localhost:3000
 
 ---
 
-## 📸 Screenshots
-
-> Add screenshots of:
-
-- Landing Page
-- Sign Up
-- Sign In
-- Dashboard
-- Anonymous Messages
-- AI Message Suggestions
-
----
-
 ## 🔮 Upcoming Features
 
 - ✅ Dark Mode

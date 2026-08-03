@@ -9,30 +9,27 @@ export async function sendVerificationCode(
 ):Promise<ApiResponse> {
 
     try {
-        const response = await resend.emails.send({
-        from: 'Messonimous <onboarding@resend.dev>',
-        to: email ,
-        subject: 'Messonimous Verfication code',
-        react: VerificationEmail({ username,verificationCode }),
+        const {data ,error} = await resend.emails.send({
+            from: 'Messonimous <mail.messonimous@resend.dev>',
+            to: email ,
+            subject: 'Messonimous Verfication code',
+            react: VerificationEmail({ username,verificationCode }),
         })
+        // console.log("RESPONSE :::::::::::::::::::::",data);
 
-        console.log("RESPONSE :::::::::::::::::::::",response);
+        if(error){
+            console.error(error)
+            return {
+                success:false,
+                message:error.message
+            }
+        }
 
         return {success:true , message:"Verification code send successfully"}
-        
-    // } catch (emailError) {
-    //     console.error("Error sending verification email",emailError)
-    //     return {success:false,message:"Failed to send verification email"}
-    // }
+            
+    
     } catch (error) {
-    console.error("Resend Error:");
-
-    if (error instanceof Error) {
-        console.error(error.message);
-        console.error(error.stack);
-    } else {
-        console.error(error);
-    }
+    console.error("Resend Error:",error);
 
     return {
         success: false,

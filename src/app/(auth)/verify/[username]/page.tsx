@@ -185,7 +185,7 @@ export default function VerifyAccount() {
             className="
             mt-2
             cursor-pointer
-            border-1
+            border
             border-[#2F54FA]
             h-auto
             p-2

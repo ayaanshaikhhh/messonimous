@@ -56,7 +56,7 @@ export async function POST(request:NextRequest) {
         const expiryDate = new Date()
         expiryDate.setHours(expiryDate.getHours() + 1)
 
-        const newUser = await UserModel.create({
+        const newUser = new UserModel({
             username ,
             email,
             password:hashedPassword,
@@ -66,17 +66,19 @@ export async function POST(request:NextRequest) {
             isAcceptingMessage:true,
             messages:[]
         })
-    }
-    // Send Verification code
-    const emailResponse = await sendVerificationCode(email,username, verificationCode)
+
+        await newUser.save();
+
+        const emailResponse = await sendVerificationCode(email,username, verificationCode)
     
-    if(!emailResponse.success){
-        return NextResponse.json({
-            success:false,
-            message:emailResponse.message,
-        },{
-            status:500
-        })
+        if(!emailResponse.success){
+            await UserModel.findByIdAndDelete(newUser._id)
+            return NextResponse.json({
+                success:false,
+                message:emailResponse.message,
+            },{
+                status:500
+            })
     }
     
     return NextResponse.json({
@@ -85,6 +87,7 @@ export async function POST(request:NextRequest) {
     },{
         status:201
     })
+    }
    } 
    catch (error) {
         console.error("Error registering user",error)

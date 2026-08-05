@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
-
-import "./globals.css";
+import './globals.css'
 
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "sonner";
+
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -50,6 +50,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-slate-50 font-(family-name:--font-geist-sans) text-slate-900 overflow-hidden">
         <AuthProvider>
+         
           {children}
 
           <Toaster

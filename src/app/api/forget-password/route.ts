@@ -4,8 +4,7 @@ import UserModel from "@/models/User.model";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
-    
-    try {
+  try {
     await ConnectDB();
     const { email } = await request.json();
     const user = await UserModel.findOne({ email });
@@ -32,8 +31,13 @@ export async function POST(request: Request) {
     const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000);
 
     // Setting both in Mongo DB
+    // console.log("User before update:", user);
+
     user.resetPasswordToken = hashedResetToken;
     user.resetPasswordExpiry = resetTokenExpiry;
+
+    // console.log("Token:", user.resetPasswordToken);
+    // console.log("Expiry:", user.resetPasswordExpiry);
 
     await user.save();
 
@@ -65,10 +69,8 @@ export async function POST(request: Request) {
       },
       { status: 200 },
     );
-
-
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return Response.json(
       {
         success: false,

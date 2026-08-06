@@ -1,4 +1,5 @@
 import mongoose,{Schema,Document} from "mongoose";
+import { string } from "zod";
 
 export interface Message extends Document{
     content : string;
@@ -26,7 +27,9 @@ export interface User extends Document{
     verifyCodeExpiry:Date;
     isVerified:boolean
     isAcceptingMessage:boolean;
-    messages:Message[]
+    messages:Message[],
+    resetPasswordToken : string | null,
+    resetPasswordExpiry:Date | null
 }
 
 const UserSchema:Schema<User>  = new Schema({
@@ -65,7 +68,16 @@ const UserSchema:Schema<User>  = new Schema({
         type:Boolean,
         default:true
     },
-    messages:[MessageSchema]
+    messages:[MessageSchema],
+
+    resetPasswordToken:{
+        type:String,
+        default:null
+    },
+    resetPasswordExpiry:{
+        type:Date,
+        default:null
+    }
 })
 
 // Creating User Model 

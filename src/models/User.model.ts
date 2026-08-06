@@ -28,8 +28,8 @@ export interface User extends Document{
     isVerified:boolean
     isAcceptingMessage:boolean;
     messages:Message[],
-    resetPasswordToken : string,
-    resetPasswordExpiry:Date
+    resetPasswordToken : string | null,
+    resetPasswordExpiry:Date | null
 }
 
 const UserSchema:Schema<User>  = new Schema({

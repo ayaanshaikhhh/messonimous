@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<ApiResponse>("/api/forget-password", {
+      const response = await axios.post<ApiResponse>("/api/reset-password", {
         token: params.token,
         password: data.password,
       });

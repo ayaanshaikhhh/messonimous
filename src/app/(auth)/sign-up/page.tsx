@@ -28,6 +28,8 @@ import {
   FieldError,
 } from "@/components/ui/field";
 
+ import ShinyText from '../../../components/ui/ShinyText';
+
 const Page = () => {
   const router = useRouter();
 
@@ -106,16 +108,29 @@ const Page = () => {
     }
   };
 
+ 
+
+
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
         <div className="mb-2 space-y-3 text-center">
           <h1 className="font-(family-name:--font-heading) text-4xl font-black tracking-tight md:text-5xl">
-            Join{" "}
-            <span className="bg-linear-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-              Messonimous
-            </span>
-          </h1>
+  Join{" "}
+  <ShinyText
+    text="Messonimous"
+    className="inline-block"
+    speed={2}
+    delay={0}
+    color="#6366F1"
+    shineColor="#06B6D4"
+    spread={120}
+    direction="left"
+    yoyo={false}
+    pauseOnHover={false}
+  />
+</h1>
 
           <p className="font-sans text-slate-500">
             Create your account and start receiving anonymous

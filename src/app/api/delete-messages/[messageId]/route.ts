@@ -3,9 +3,6 @@ import {authOptions} from "../../auth/[...nextauth]/options"
 import ConnectDB from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
 import {User} from "next-auth"
-import mongoose from "mongoose";
-import { success } from "zod";
-
 
 export async function DELETE(request:Request,{params}:{params:{messageid:string}}) {
 

@@ -40,7 +40,6 @@ const signInPage = () => {
         identifier: data.identifier,
         password: data.password,
       });
-      console.log("RESULT OF SIGN_IN CREDENTIALS", result);
 
       if (result?.error) {
         toast.error("Login Failed", {

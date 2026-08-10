@@ -10,8 +10,6 @@ export async function GET(request: Request) {
 
     const session = await getServerSession(authOptions);
 
-    // console.log("Session:", session);
-
     if (!session || !session.user) {
       return Response.json(
         {
@@ -24,13 +22,9 @@ export async function GET(request: Request) {
 
     const sessionUser = session.user as User;
 
-    // console.log("Session User ID:", sessionUser._id);
-
     const foundUser = await UserModel.findById(sessionUser._id).select(
       "messages"
     );
-
-    // console.log("Found User:", foundUser);
 
     if (!foundUser) {
       return Response.json(

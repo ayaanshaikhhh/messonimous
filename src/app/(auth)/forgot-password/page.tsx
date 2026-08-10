@@ -21,6 +21,7 @@ import {
   FieldError,
   FieldLabel,
 } from "@/components/ui/field";
+import ShinyText from "@/components/ui/ShinyText";
 
 export default function ForgotPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,9 +70,18 @@ export default function ForgotPasswordPage() {
         <div className="mb-6 space-y-2 text-center sm:mb-8 sm:space-y-3">
           <h1 className="font-(family-name:--font-heading) text-3xl font-black tracking-tight sm:text-4xl">
             Forgot{" "}
-            <span className="bg-linear-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-              Password
-            </span>
+             <ShinyText
+              text="Password"
+              className="inline-block"
+              speed={2}
+              delay={0}
+              color="#6366F1"
+              shineColor="#06B6D4"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+            />
           </h1>
 
           <p className="text-sm leading-6 text-slate-500 sm:text-base">

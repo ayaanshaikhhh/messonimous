@@ -1,49 +1,97 @@
-import {getServerSession} from "next-auth"
-import {authOptions} from "../../auth/[...nextauth]/options"
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 import ConnectDB from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
-import {User} from "next-auth"
+import mongoose from "mongoose";
 
-export async function DELETE(request:Request,{params}:{params:{messageid:string}}) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ messageId: string }> }
+) {
+  try {
+    await ConnectDB();
 
-    const messageId =  params.messageid;
+    // Check authentication
+    const session = await getServerSession(authOptions);
 
-    await ConnectDB()
-
-    const session = await getServerSession(authOptions)
-    const user:User  = session?.user as User
-
-    if(!session || !session.user){
-        return Response.json({
-            success:false,
-            message:"Not Authenticated"
-        },{status:401})
+    if (!session?.user) {
+      return Response.json(
+        {
+          success: false,
+          message: "Not Authenticated",
+        },
+        { status: 401 }
+      );
     }
 
-    try {
-        const updatedResult = await UserModel.updateOne(
-            {_id : user._id},
-            {$pull:{messages:{_id : messageId}}}
-        )
+    // Get dynamic route parameter
+    const { messageId } = await params;
 
-        if(updatedResult.modifiedCount === 0){
-            return Response.json({
-                success:false,
-                message:"Message not found or already deleted"
-            },{status:404})
-        }
-
-        return Response.json({
-            success:true,
-            message:"Message Deleted"
-        },{status:200})
-
-
-    } catch (error) {
-        console.error("ERROR DELETING MESSAGES::::::::::",error)
-        return Response.json({
-            success:false,
-            message:"Error Deleting Messages"
-        },{status:500})
+    // Validate ObjectId
+    if (!messageId || !mongoose.Types.ObjectId.isValid(messageId)) {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid message ID",
+        },
+        { status: 400 }
+      );
     }
+
+    // Get logged-in user's ID
+    const userId = session.user._id;
+
+    if (!userId) {
+      return Response.json(
+        {
+          success: false,
+          message: "User ID not found in session",
+        },
+        { status: 401 }
+      );
+    }
+
+    // Delete the message
+    const result = await UserModel.updateOne(
+      {
+        _id: userId,
+        "messages._id": new mongoose.Types.ObjectId(messageId),
+      },
+      {
+        $pull: {
+          messages: {
+            _id: new mongoose.Types.ObjectId(messageId),
+          },
+        },
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "Message not found or already deleted",
+        },
+        { status: 404 }
+      );
+    }
+
+    return Response.json(
+      {
+        success: true,
+        message: "Message deleted successfully",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("ERROR DELETING MESSAGE:", error);
+
+    return Response.json(
+      {
+        success: false,
+        message: "Error deleting message",
+      },
+      { status: 500 }
+    );
+  }
 }

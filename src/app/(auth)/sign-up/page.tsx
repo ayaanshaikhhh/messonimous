@@ -8,11 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios, { AxiosError } from "axios";
 import { useDebounceCallback } from "usehooks-ts";
-import {
-  Loader2Icon,
-  CircleCheckIcon,
-  CircleXIcon,
-} from "lucide-react";
+import { Loader2Icon, CircleCheckIcon, CircleXIcon, EyeOff, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 import { signUpSchema } from "@/schemas/signUpSchema";
@@ -28,7 +24,7 @@ import {
   FieldError,
 } from "@/components/ui/field";
 
- import ShinyText from '../../../components/ui/ShinyText';
+import ShinyText from "../../../components/ui/ShinyText";
 
 const Page = () => {
   const router = useRouter();
@@ -37,6 +33,8 @@ const Page = () => {
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const debounced = useDebounceCallback(setUsername, 500);
 
@@ -60,7 +58,7 @@ const Page = () => {
 
       try {
         const response = await axios.get<ApiResponse>(
-          `/api/check-username-unique?username=${username}`
+          `/api/check-username-unique?username=${username}`,
         );
 
         setUsernameMessage(response.data.message);
@@ -68,8 +66,7 @@ const Page = () => {
         const axiosError = error as AxiosError<ApiResponse>;
 
         setUsernameMessage(
-          axiosError.response?.data.message ??
-            "Unable to check username."
+          axiosError.response?.data.message ?? "Unable to check username.",
         );
       } finally {
         setIsCheckingUsername(false);
@@ -79,16 +76,11 @@ const Page = () => {
     checkUsernameUniqueness();
   }, [username]);
 
-  const onSubmit = async (
-    data: z.infer<typeof signUpSchema>
-  ) => {
+  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<ApiResponse>(
-        "/api/sign-up",
-        data
-      );
+      const response = await axios.post<ApiResponse>("/api/sign-up", data);
 
       toast.success("Success", {
         description: response.data.message,
@@ -100,67 +92,51 @@ const Page = () => {
 
       toast.error("Sign Up Failed", {
         description:
-          axiosError.response?.data.message ??
-          "Something went wrong",
+          axiosError.response?.data.message ?? "Something went wrong",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
- 
-
-
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
         <div className="mb-2 space-y-3 text-center">
           <h1 className="font-(family-name:--font-heading) text-4xl font-black tracking-tight md:text-5xl">
-  Join{" "}
-  <ShinyText
-    text="Messonimous"
-    className="inline-block"
-    speed={2}
-    delay={0}
-    color="#6366F1"
-    shineColor="#06B6D4"
-    spread={120}
-    direction="left"
-    yoyo={false}
-    pauseOnHover={false}
-  />
-</h1>
+            Join{" "}
+            <ShinyText
+              text="Messonimous"
+              className="inline-block"
+              speed={2}
+              delay={0}
+              color="#6366F1"
+              shineColor="#06B6D4"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+            />
+          </h1>
 
           <p className="font-sans text-slate-500">
-            Create your account and start receiving anonymous
-            messages from anyone.
+            Create your account and start receiving anonymous messages from
+            anyone.
           </p>
         </div>
 
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-5"
-        >
-
-
-        {/* Username */}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          {/* Username */}
 
           <Controller
             name="username"
             control={form.control}
             render={({ field, fieldState }) => {
-              const isAvailable =
-                usernameMessage === "Username is available";
+              const isAvailable = usernameMessage === "Username is available";
 
               return (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  className="space-y-2"
-                >
-                  <FieldLabel htmlFor={field.name}>
-                    Username
-                  </FieldLabel>
+                <Field data-invalid={fieldState.invalid} className="space-y-2">
+                  <FieldLabel htmlFor={field.name}>Username</FieldLabel>
 
                   <div className="relative">
                     <Input
@@ -242,19 +218,14 @@ const Page = () => {
             }}
           />
 
-                    {/* Email */}
+          {/* Email */}
 
           <Controller
             name="email"
             control={form.control}
             render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                className="space-y-2"
-              >
-                <FieldLabel htmlFor={field.name}>
-                  Email
-                </FieldLabel>
+              <Field data-invalid={fieldState.invalid} className="space-y-2">
+                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
 
                 <Input
                   {...field}
@@ -266,9 +237,7 @@ const Page = () => {
                   className="h-11 rounded-xl border-slate-300 transition-all focus-visible:ring-2 focus-visible:ring-violet-500"
                 />
 
-                {fieldState.error && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.error && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -279,27 +248,39 @@ const Page = () => {
             name="password"
             control={form.control}
             render={({ field, fieldState }) => (
-              <Field
-                data-invalid={fieldState.invalid}
-                className="space-y-2"
-              >
-                <FieldLabel htmlFor={field.name}>
-                  Password
-                </FieldLabel>
-
-                <Input
-                  {...field}
-                  id={field.name}
-                  type="password"
-                  autoComplete="new-password"
-                  aria-invalid={fieldState.invalid}
-                  placeholder="••••••••"
-                  className="h-11 rounded-xl border-slate-300 transition-all focus-visible:ring-2 focus-visible:ring-violet-500"
-                />
-
-                {fieldState.error &&(
+              <Field data-invalid={fieldState.invalid}>
+                {" "}
+                <FieldLabel htmlFor={field.name}>Password</FieldLabel>{" "}
+                <div className="relative">
+                  {" "}
+                  <Input
+                    {...field}
+                    id={field.name}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="••••••••"
+                    className="h-11 rounded-xl border-slate-300 pr-11 transition-all focus-visible:ring-2 focus-visible:ring-violet-500"
+                  />{" "}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-700"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {" "}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}{" "}
+                  </button>{" "}
+                </div>{" "}
+                {fieldState.error && (
                   <FieldError errors={[fieldState.error]} />
-                )}
+                )}{" "}
               </Field>
             )}
           />
@@ -330,7 +311,7 @@ const Page = () => {
           </Link>
         </div>
       </div>
-      </div>
+    </div>
   );
 };
 

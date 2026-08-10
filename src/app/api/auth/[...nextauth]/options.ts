@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!credentials?.identifier || !credentials?.password) {
           throw new Error("Missing credentials");
-          }
+    }
 
           // Comparing password
           const isPasswordCorrect = await bcrypt.compare(

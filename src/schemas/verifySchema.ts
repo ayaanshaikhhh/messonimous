@@ -1,7 +1,8 @@
-import {z} from "zod";
+import { z } from "zod";
 
 export const verifySchema = z.object({
-    code :z
+  code: z
     .string()
-    .length(6,"Verification code must be 6 digits long")
-})
+    .length(6, "Verification code must be 6 digits long")
+    .regex(/^\d+$/, "Verification code must contain only digits"),
+});

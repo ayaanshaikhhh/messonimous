@@ -5,7 +5,6 @@ import './globals.css'
 import AuthProvider from "@/context/AuthProvider";
 import { Toaster } from "sonner";
 
-
 const geistSans = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
@@ -48,7 +47,7 @@ export default function RootLayout({
         antialiased
       `}
     >
-      <body className="min-h-screen bg-slate-50 font-(family-name:--font-geist-sans) text-slate-900 overflow-hidden">
+      <body className="min-h-screen bg-slate-50 font-(family-name:--font-geist-sans) text-slate-900 overflow-auto">
         <AuthProvider>
          
           {children}
@@ -64,3 +63,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+

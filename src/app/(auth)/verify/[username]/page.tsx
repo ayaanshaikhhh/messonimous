@@ -153,7 +153,7 @@ export default function VerifyAccount() {
                   <FieldError errors={[fieldState.error]} />
                 ) : (
                   <FieldDescription>
-                    The code expires in 5 minutes.
+                    The code expires in 10 minutes.
                   </FieldDescription>
                 )}
               </Field>

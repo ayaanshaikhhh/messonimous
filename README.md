@@ -94,7 +94,7 @@ src/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/messonimous.git
+git clone https://github.com/ayaanshaikhhh/messonimous.git
 ```
 
 Move into the project

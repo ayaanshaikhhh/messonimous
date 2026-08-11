@@ -1,7 +1,6 @@
 import { sendVerificationCode } from "@/helpers/sendVerificationEmail";
 import ConnectDB from "@/lib/dbConnect";
-import UserModel from "@/models/User.model";
-import { email, success } from "zod";
+import PendingVerification from "@/models/PendingVerification.model";
 
 export async function POST(request: Request) {
   await ConnectDB();
@@ -19,8 +18,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await UserModel.findOne({
-      username,
+    const decodedUsername = decodeURIComponent(username).trim();
+
+    const user = await PendingVerification.findOne({
+      username: decodedUsername,
     });
 
     if (!user) {
@@ -33,33 +34,23 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.isVerified) {
-      return Response.json({
-        success: false,
-        message: "User is already verified",
-      });
-    }
-
     // Generated a verification code
     const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Expires in 1 hour
-    const verifyCodeExpiry = new Date();
-    verifyCodeExpiry.setHours(verifyCodeExpiry.getHours() + 1);
+    const verifyCodeExpiry = new Date( Date.now() + 10 * 60 * 1000 );
 
     // Saving new Verification Code and Verification code expiry time
-    user.verifyCode = verifyCode;
-    user.verifyCodeExpiry = verifyCodeExpiry;
+    user.verificationCode = verifyCode;
+    user.verificationCodeExpiry = verifyCodeExpiry;
 
     await user.save()
 
     const emailResponse = await sendVerificationCode(
         user.email,
         user.username,
-        user.verifyCode,
+        user.verificationCode
     )
-
-    console.log("EMAIL RESPONSE ::::::::::::::::::::",emailResponse);
 
     if(!emailResponse.success){
         return Response.json({

@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles } from "lucide-react";
 
 import { ApiResponse } from "@/types/ApiResponse";
+import ShinyText from "@/components/ui/ShinyText";
 
 type SuggestionResponse = {
   success: boolean;
@@ -107,7 +108,7 @@ const MessagePage = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="min-h-screen px-4 py-5">
       <div className="mx-auto w-full max-w-2xl">
         <Card className="space-y-8 p-6 sm:p-8">
 
@@ -119,8 +120,19 @@ const MessagePage = () => {
 
             <p className="text-muted-foreground">
               to{" "}
-              <span className="font-semibold text-violet-600">
-                @{username}
+              <span className="font-bold text-violet-600">
+                <ShinyText
+              text={username}
+              className="inline-block"
+              speed={2}
+              delay={0}
+              color="#6366F1"
+              shineColor="#06B6D4"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+            />
               </span>
             </p>
           </div>
@@ -170,7 +182,7 @@ const MessagePage = () => {
             {/* Generate button */}
             <Button
               variant="secondary"
-              className="w-full"
+             className="mx-auto flex w-full justify-center cursor-pointer sm:w-1/2 " 
               onClick={handleSuggestMessages}
               disabled={isSuggesting}
             >

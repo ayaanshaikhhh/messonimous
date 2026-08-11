@@ -1,8 +1,8 @@
-import { Message } from "@/models/User.model"
+import {Message} from "../types/Message"
 
 export interface ApiResponse{
     success:boolean
     message:string
-    isAcceptingMessage: boolean
+    isAcceptingMessage?: boolean
     messages?: Array<Message>
 }

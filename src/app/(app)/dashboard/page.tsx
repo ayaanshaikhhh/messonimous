@@ -24,10 +24,20 @@ import {
   MessageCircle,
   Inbox,
   Share2,
+  Trash2,
 } from "lucide-react";
 
-import ShinyText from "../../../components/ui/ShinyText";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
@@ -35,6 +45,7 @@ const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
@@ -52,6 +63,33 @@ const Dashboard = () => {
     setMessages((prev) =>
       prev.filter((message) => message._id !== messageId)
     );
+  };
+
+  // Remove all messages from UI
+  const handleDeleteAllMessages = async () => {
+    setIsDeleting(true);
+
+    try {
+      const response = await axios.delete<ApiResponse>(
+        "/api/delete-all-messages"
+      );
+
+      setMessages([]);
+
+      toast.success("Messages deleted", {
+        description: response.data.message,
+      });
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+
+      toast.error("Error", {
+        description:
+          axiosError.response?.data.message ??
+          "Failed to delete all messages.",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Fetch whether user is accepting messages
@@ -249,7 +287,8 @@ const Dashboard = () => {
                 className="h-10 flex-1 rounded-md border bg-muted px-3 text-sm outline-none"
               />
 
-              <Button className='cursor-pointer'
+              <Button
+                className="cursor-pointer"
                 onClick={() => {
                   if (!profileUrl) return;
 
@@ -288,7 +327,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <Switch className="cursor-pointer"
+          <Switch
+            className="cursor-pointer"
             checked={acceptMessages ?? false}
             disabled={isSwitchLoading}
             onCheckedChange={handleSwitchChange}
@@ -312,10 +352,76 @@ const Dashboard = () => {
               </p>
             </div>
 
-            <span className="w-fit rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground">
-              {messages.length}{" "}
-              {messages.length === 1 ? "message" : "messages"}
-            </span>
+            <div className="flex items-center gap-3">
+
+              <span className="w-fit rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground">
+                {messages.length}{" "}
+                {messages.length === 1 ? "message" : "messages"}
+              </span>
+
+              {/* Delete All button only appears when there are 2+ messages */}
+              {messages.length >= 2 && (
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    render={
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={isDeleting}
+                        className="cursor-pointer"
+                      >
+                        {isDeleting ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="mr-2 h-4 w-4" />
+                        )}
+
+                        Delete All
+                      </Button>
+                    }
+                  />
+
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Delete all messages?
+                      </AlertDialogTitle>
+
+                      <AlertDialogDescription>
+                        This will permanently delete all{" "}
+                        <span className="font-semibold">
+                          {messages.length}
+                        </span>{" "}
+                        anonymous messages from your inbox. This action
+                        cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>
+                        Cancel
+                      </AlertDialogCancel>
+
+                      <AlertDialogAction
+                        onClick={handleDeleteAllMessages}
+                        disabled={isDeleting}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {isDeleting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Deleting...
+                          </>
+                        ) : (
+                          "Delete All"
+                        )}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+            </div>
 
           </div>
 
@@ -379,17 +485,14 @@ const Dashboard = () => {
                   onMessageDelete={handleDeleteMessages}
                 />
               ))}
-
             </div>
-
           )}
-
         </section>
-
       </div>
     </main>
   );
 };
 
 export default Dashboard;
+
 

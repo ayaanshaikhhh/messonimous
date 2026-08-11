@@ -58,7 +58,6 @@ export async function POST(request: Request) {
       );
     }
 
-   
     // Checking again before creating the actual user.
     // --------------------------------------------------
 

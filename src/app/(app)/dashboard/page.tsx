@@ -38,6 +38,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import ShinyText from "@/components/ui/ShinyText";
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
@@ -230,10 +231,18 @@ const Dashboard = () => {
 
               <h1 className="text-3xl font-bold">
                 Welcome,
-                <span className="text-violet-600">
-                  {" "}
-                  {session.user.username}
-                </span>
+                <ShinyText
+              text={session.user.username}
+              className="inline-block"
+              speed={2}
+              delay={0}
+              color="#6366F1"
+              shineColor="#06B6D4"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+            />
               </h1>
             </div>
 

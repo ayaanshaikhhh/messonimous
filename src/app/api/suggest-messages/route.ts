@@ -1,4 +1,4 @@
-import {groq} from "@/lib/gemini"
+import {groq} from "@/lib/groq"
 import { messageSuggestionPrompt } from "@/prompts/suggestMessages";
 
 export async function POST() {

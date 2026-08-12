@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
 
           if (!credentials?.identifier || !credentials?.password) {
           throw new Error("Missing credentials");
-}
+    }
 
           // Comparing password
           const isPasswordCorrect = await bcrypt.compare(
@@ -90,5 +90,5 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXT_AUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };

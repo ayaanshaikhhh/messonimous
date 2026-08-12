@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Card,
@@ -8,12 +8,125 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 
-const MessageCard = () => {
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Button } from "./ui/button";
+import { Message } from "@/types/Message";
+
+import axios, { AxiosError } from "axios";
+import { toast } from "sonner";
+
+type MessageCardProps = {
+  message: Message;
+  onMessageDelete: (messageId: string) => void;
+};
+
+const MessageCard = ({
+  message,
+  onMessageDelete,
+}: MessageCardProps) => {
+ 
+const handleMessageDeleteConfirm = async () => {
+  try {
+    const response = await axios.delete(
+      `/api/delete-messages/${message._id}`
+    );
+
+    toast.success(response.data.message);
+
+    onMessageDelete(message._id);
+  } catch (error) {
+    const axiosError = error as AxiosError<{
+      success: boolean;
+      message: string;
+    }>;
+
+    toast.error("Error", {
+      description:
+        axiosError.response?.data.message ??
+        "Failed to delete message.",
+    });
+  }
+};
+
+
   return (
-    <div>MessageCard</div>
-  )
-}
+    <Card>
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <CardTitle>Anonymous Message</CardTitle>
 
-export default MessageCard
+            <CardDescription>
+              {new Date(message.createdAt).toLocaleString()}
+            </CardDescription>
+          </div>
+
+          <CardAction>
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={
+                  <Button variant="destructive" size="sm">
+                    Delete
+                  </Button>
+                }
+              />
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Delete this message?
+                  </AlertDialogTitle>
+
+                  <AlertDialogDescription>
+                    This action cannot be undone. This message
+                    will be permanently deleted.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>
+                    Cancel
+                  </AlertDialogCancel>
+
+                  <AlertDialogAction
+                    onClick={handleMessageDeleteConfirm}
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardAction>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <p className="text-sm leading-7 text-muted-foreground">
+          {message.content}
+        </p>
+      </CardContent>
+
+      <CardFooter>
+        <p className="text-xs text-muted-foreground">
+          Anonymous Feedback
+        </p>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default MessageCard;
+

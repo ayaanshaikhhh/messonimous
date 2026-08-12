@@ -25,6 +25,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import ShinyText from "@/components/ui/ShinyText";
 
 export default function VerifyAccount() {
   const router = useRouter();
@@ -115,9 +116,18 @@ export default function VerifyAccount() {
         <div className="mb-8 text-center space-y-3">
           <h1 className="font-(family-name:--font-heading) text-4xl font-black tracking-tight">
             Verify{" "}
-            <span className="bg-linear-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-              Account
-            </span>
+            <ShinyText
+              text="Account"
+              className="inline-block"
+              speed={2}
+              delay={0}
+              color="#6366F1"
+              shineColor="#06B6D4"
+              spread={120}
+              direction="left"
+              yoyo={false}
+              pauseOnHover={false}
+            />
           </h1>
 
           <p className="text-slate-500">
@@ -153,7 +163,7 @@ export default function VerifyAccount() {
                   <FieldError errors={[fieldState.error]} />
                 ) : (
                   <FieldDescription>
-                    The code expires in 5 minutes.
+                    The code expires in 10 minutes.
                   </FieldDescription>
                 )}
               </Field>

@@ -38,9 +38,7 @@ const Navbar = () => {
 
   const user = session?.user as User | undefined;
 
-  // =====================================================
   // RECOVER ACCOUNT
-  // =====================================================
 
   const handleRecoverAccount = async () => {
     try {
@@ -72,10 +70,8 @@ const Navbar = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  // =====================================================
   // SEND DELETE ACCOUNT OTP
-  // =====================================================
-
+  
   const handleSendDeletionOTP = async () => {
   try {
     setIsSendingOTP(true);

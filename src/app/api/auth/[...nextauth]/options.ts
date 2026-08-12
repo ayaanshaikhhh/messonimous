@@ -3,7 +3,7 @@ import UserModel from "@/models/User.model";
 import bcrypt from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { User } from '../../../../models/User.model';
+import { User } from "../../../../models/User.model";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,15 +12,15 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
 
       credentials: {
-        identifier:{
-          label:"Email or Username",
-          type:"text",
-          placeholder:'Enter your email or username'
+        identifier: {
+          label: "Email or Username",
+          type: "text",
+          placeholder: "Enter your email or username",
         },
-        password:{
-          label:"Password",
-          type:"password"
-        }
+        password: {
+          label: "Password",
+          type: "password",
+        },
       },
 
       async authorize(credentials): Promise<any> {
@@ -43,8 +43,8 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (!credentials?.identifier || !credentials?.password) {
-          throw new Error("Missing credentials");
-    }
+            throw new Error("Missing credentials");
+          }
 
           // Comparing password
           const isPasswordCorrect = await bcrypt.compare(
@@ -70,6 +70,10 @@ export const authOptions: NextAuthOptions = {
         session.user.isVerified = token.isVerified;
         session.user.isAcceptingMessage = token.isAcceptingMessage;
         session.user.username = token.username;
+
+        session.user.isDeleted = token.isDeleted;
+        session.user.deletionRequestedAt = token.deletionRequestedAt;
+        session.user.deletionScheduledFor = token.deletionScheduledFor;
       }
       return session;
     },
@@ -79,6 +83,10 @@ export const authOptions: NextAuthOptions = {
         token.isVerified = user.isVerified;
         token.isAcceptingMessage = user.isAcceptingMessage;
         token.username = user.username;
+
+        token.isDeleted = user.isDeleted;
+        token.deletionRequestedAt = user.deletionRequestedAt;
+        token.deletionScheduledFor = user.deletionScheduledFor;
       }
 
       return token;

@@ -5,7 +5,7 @@ export interface Message extends Document {
   createdAt: Date;
 }
 
-const MessageSchema = new Schema<Message>(
+const MessageSchema = new Schema(
   {
     content: {
       type: String,
@@ -31,12 +31,18 @@ export interface User extends Document {
   isAcceptingMessage: boolean;
 
   messages: Message[];
-
+  
+  // Password Reset
   resetPasswordToken: string | null;
   resetPasswordExpiry: Date | null;
+
+  // Account deletion
+  isDeleted: boolean;
+  deletionRequestedAt: Date | null;
+  deletionScheduledFor: Date | null;
 }
 
-const UserSchema = new Schema<User>(
+const UserSchema = new Schema(
   {
     username: {
       type: String,
@@ -85,6 +91,23 @@ const UserSchema = new Schema<User>(
     resetPasswordExpiry: {
       type: Date,
       default: null,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    deletionRequestedAt: {
+      type: Date,
+      default: null,
+    },
+
+    deletionScheduledFor: {
+      type: Date,
+      default: null,
+      index: true,
     },
   },
   {

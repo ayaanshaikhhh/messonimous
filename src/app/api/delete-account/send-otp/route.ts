@@ -4,7 +4,7 @@ import UserModel from "@/models/User.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import { sendAccountDeletionEmail } from "@/helpers/sendAccountDeletionEmail";
-
+import crypto from "crypto";
 
 export async function POST(request:Request) {
     try {
@@ -15,7 +15,7 @@ export async function POST(request:Request) {
 
         const userId = session?.user._id
 
-        if(!session?.user._id){
+        if(!userId){
             return Response.json({
                 success:false,
                 message:"Not Authenticated"
@@ -23,7 +23,7 @@ export async function POST(request:Request) {
         }
 
         // Find the user
-        const user = await UserModel.findById(session.user._id);
+        const user = await UserModel.findById(userId);
 
         if(!user){
             return Response.json({
@@ -41,7 +41,7 @@ export async function POST(request:Request) {
         }
 
         // IF USER IS FOUND THEN GENERATE THE VERIFICATION CODE AND EXPIRY
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString()
+        const verificationCode = crypto.randomInt(100000 , 1000000).toString()
 
         const verificationCodeExpiry = new Date(Date.now() + 10 * 60 * 1000 );
 

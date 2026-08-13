@@ -232,7 +232,7 @@ const Dashboard = () => {
               <h1 className="text-3xl font-bold">
                 Welcome,
                 <ShinyText
-              text={session.user.username}
+              text={session.user.username }
               className="inline-block"
               speed={2}
               delay={0}

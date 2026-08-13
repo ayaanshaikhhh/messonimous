@@ -85,7 +85,7 @@ const signInPage = () => {
         password: recoveryPassword,
       });
 
-      toast.success(response.data.message);
+      toast.success(response.data.message || "Your account is successfully restored");
 
       // After Revovering and Processing , Creating NextAuth Session
       const result = await signIn("credentials", {
@@ -105,8 +105,6 @@ const signInPage = () => {
       // Login Successful
       if (result?.ok) {
         setIsRecoverDialogOpen(false);
-
-        toast.success("Account Recovered Successfully.");
 
         // Clear sensitive recovery state
         setRecoveryIdentifier("");

@@ -27,10 +27,18 @@ export const authOptions: NextAuthOptions = {
         await ConnectDB();
 
         try {
+          // Validating credentials
+
+          if (!credentials?.identifier || !credentials?.password) {
+            throw new Error("Provide Username and Password");
+          }
+
+          // Find user by username or email
+
           const user = await UserModel.findOne({
             $or: [
-              { username: credentials?.identifier },
-              { email: credentials?.identifier },
+              { username: credentials.identifier },
+              { email: credentials.identifier },
             ],
           });
 
@@ -38,27 +46,30 @@ export const authOptions: NextAuthOptions = {
             throw new Error("No user found");
           }
 
-          if (!user.isVerified) {
-            throw new Error("Please verify yourself before login");
-          }
+          //Checking password
 
-          if (!credentials?.identifier || !credentials?.password) {
-            throw new Error("Missing credentials");
-          }
-
-          // Comparing password
           const isPasswordCorrect = await bcrypt.compare(
-            credentials?.password,
+            credentials.password,
             user.password,
           );
 
-          if (isPasswordCorrect) {
-            return user;
-          } else {
+          if (!isPasswordCorrect) {
             throw new Error("Incorrect Password");
           }
-        } catch (err: any) {
-          throw new Error(err);
+
+          // Checking account deletion status
+
+          if (user.isDeleted) {
+            throw new Error("ACCOUNT_SCHEDULED_FOR_DELETION");
+          }
+
+          // Login
+
+          return user;
+        } catch (error) {
+          console.error("NEXTAUTH AUTHORIZE ERROR:", error);
+
+          throw error;
         }
       },
     }),

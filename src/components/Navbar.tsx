@@ -21,12 +21,11 @@ import {
 import axios from "axios";
 import { toast } from "sonner";
 import { Dialog } from "@base-ui/react";
-import {useRouter} from "next/navigation";
-
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { data: session } = useSession();
-  const router = useRouter()
+  const router = useRouter();
 
   const [isRecovering, setIsRecovering] = useState(false);
 
@@ -64,48 +63,34 @@ const Navbar = () => {
     }
   };
 
-  // OPEN DELETE ACCOUNT DIALOG
-
-  const handleDeleteProfile = () => {
-    setIsDeleteDialogOpen(true);
-  };
-
   // SEND DELETE ACCOUNT OTP
-  
+
   const handleSendDeletionOTP = async () => {
-  try {
-    setIsSendingOTP(true);
+    try {
+      setIsSendingOTP(true);
 
-    const response = await axios.post(
-      "/api/delete-account/send-otp",
-    );
+      const response = await axios.post("/api/delete-account/send-otp");
 
-    toast.success(response.data.message);
+      toast.success(response.data.message);
 
-    setIsDeleteDialogOpen(false);
+      setIsDeleteDialogOpen(false);
 
-    // Move user to OTP verification page
-    router.push("/delete-account/verify");
-  } catch (error) {
-    console.error(
-      "SEND DELETE ACCOUNT OTP ERROR:",
-      error,
-    );
+      // Move user to OTP verification page
+      router.push("/delete-account/verify");
+    } catch (error) {
+      console.error("SEND DELETE ACCOUNT OTP ERROR:", error);
 
-    if (axios.isAxiosError(error)) {
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to send deletion OTP.",
-      );
-    } else {
-      toast.error(
-        "Failed to send deletion OTP.",
-      );
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Failed to send deletion OTP.",
+        );
+      } else {
+        toast.error("Failed to send deletion OTP.");
+      }
+    } finally {
+      setIsSendingOTP(false);
     }
-  } finally {
-    setIsSendingOTP(false);
-  }
-};
+  };
 
   return (
     <header className="w-full border-b">
@@ -212,7 +197,6 @@ const Navbar = () => {
                   variant="destructive"
                   className="cursor-pointer"
                   onClick={() => {
-                    console.log("Delete Profile clicked");
                     setIsDeleteDialogOpen(true);
                   }}
                 >
@@ -234,12 +218,7 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* =====================================================
-                DELETE ACCOUNT DIALOG
-
-                IMPORTANT:
-                This is OUTSIDE DropdownMenuContent.
-            ===================================================== */}
+            {/* DELETE ACCOUNT DIALOG */}
 
             <Dialog.Root
               open={isDeleteDialogOpen}

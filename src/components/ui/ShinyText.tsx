@@ -3,7 +3,7 @@ import { motion, useMotionValue, useAnimationFrame, useTransform } from 'motion/
 import '../../../src/app/globals.css';
 
 type ShinyTextProps = {
-  text: string;
+  text?: string;
   disabled?: boolean;
   speed?: number;
   className?: string;

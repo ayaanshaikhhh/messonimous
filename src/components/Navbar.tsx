@@ -63,12 +63,6 @@ const Navbar = () => {
     }
   };
 
-  // OPEN DELETE ACCOUNT DIALOG
-
-  const handleDeleteProfile = () => {
-    setIsDeleteDialogOpen(true);
-  };
-
   // SEND DELETE ACCOUNT OTP
 
   const handleSendDeletionOTP = async () => {
@@ -203,7 +197,6 @@ const Navbar = () => {
                   variant="destructive"
                   className="cursor-pointer"
                   onClick={() => {
-                    console.log("Delete Profile clicked");
                     setIsDeleteDialogOpen(true);
                   }}
                 >

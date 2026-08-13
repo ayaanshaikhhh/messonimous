@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
           // Validating credentials
 
           if (!credentials?.identifier || !credentials?.password) {
-            throw new Error("Missing credentials");
+            throw new Error("Provide Username and Password");
           }
 
           // Find user by username or email

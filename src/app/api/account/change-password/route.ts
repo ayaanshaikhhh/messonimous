@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       return Response.json(
         {
           success: false,
-          message: "Not authenticated.",
+          message: "Login first to change the password",
         },
         { status: 401 },
       );

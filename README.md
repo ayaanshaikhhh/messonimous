@@ -25,23 +25,21 @@ The application also provides account management features such as:
 
 # 🚀 Tech Stack
 
-  Technology        Purpose
-  ----------------- -----------------------------
-  ⚛️ React          Frontend UI
-  ▲ Next.js         Full-stack React framework
-  📘 TypeScript     Type safety
-  🎨 Tailwind CSS   Styling
-  🧩 shadcn/ui      UI components
-  🔐 NextAuth       Authentication and sessions
-  🗄️ MongoDB        Database
-  🐍 Mongoose       MongoDB ODM
-  ✅ Zod            Request/form validation
-  🔒 bcrypt         Password hashing
-  📧 Resend         Transactional emails
-  🤖 AI API         AI message suggestions
-  📦 Axios          HTTP requests
-  🔀 Git & GitHub   Version control
-  ☁️ Vercel         Deployment and cron jobs
+- ⚛️ **React** — Frontend UI
+- ▲ **Next.js** — Full-stack React framework
+- 📘 **TypeScript** — Type safety
+- 🎨 **Tailwind CSS** — Styling
+- 🧩 **shadcn/ui** — UI components
+- 🔐 **NextAuth** — Authentication and sessions
+- 🗄️ **MongoDB** — Database
+- 🐍 **Mongoose** — MongoDB ODM
+- ✅ **Zod** — Request/form validation
+- 🔒 **bcrypt** — Password hashing
+- 📧 **Nodemailer** — Transactional emails
+- 🤖 **AI API** — AI message suggestions
+- 📦 **Axios** — HTTP requests
+- 🔀 **Git & GitHub** — Version control
+- ☁️ **Vercel** — Deployment and cron jobs
 
 ------------------------------------------------------------------------
 
@@ -187,38 +185,12 @@ Each user gets a unique public URL:
 Example:
 
 ``` text
-/u/sobiya
+/u/ayaan
 ```
 
 Visitors can open the profile and send a message without creating an
 account.
 
-## 🔄 Message Flow
-
-``` text
-Visitor
-   │
-   ▼
-/u/<username>
-   │
-   ▼
-Write Anonymous Message
-   │
-   ▼
-POST /api/send-message
-   │
-   ▼
-Validate Request
-   │
-   ▼
-Find User by Username
-   │
-   ▼
-Save Message
-   │
-   ▼
-✅ Message Delivered
-```
 
 If the username does not exist:
 
@@ -262,95 +234,16 @@ Every username is:
 
 The username is normalized before being stored:
 
-``` ts
-const normalizedUsername = username.trim().toLowerCase();
-```
 
 ## ⏳ 14-Day Username Change Cooldown
 
 To prevent frequent username changes, Messonimous allows a user to
 change their username only once every **14 days**.
 
-The user model stores:
-
-``` text
-usernameLastChangedAt
-```
-
-When a username is changed:
-
-``` text
-Current Username
-       │
-       ▼
-Validate New Username
-       │
-       ▼
-Check 14-Day Cooldown
-       │
-       ▼
-Check Username Availability
-       │
-       ▼
-Update Username
-       │
-       ▼
-Update usernameLastChangedAt
-```
-
-If the user tries to change the username before the cooldown expires:
-
-``` text
-429 Too Many Requests
-```
-
-The API returns the remaining time and the next allowed change date.
-
-## 🔄 Username Change API
-
-``` http
-POST /api/account/change-username
-```
-
-Example request:
-
-``` json
-{
-  "username": "newusername"
-}
-```
-
-Successful response:
-
-``` json
-{
-  "success": true,
-  "message": "Username changed successfully.",
-  "username": "newusername"
-}
-```
-
-If the username is already taken:
-
-``` text
-409 Conflict
-```
-
-If the 14-day cooldown has not expired:
-
-``` text
-429 Too Many Requests
-```
 
 ------------------------------------------------------------------------
 
 # 🔑 Password Management
-
-Users can change their password from:
-
-``` text
-/settings/change-password
-```
 
 The password change interface contains:
 
@@ -364,44 +257,6 @@ New Password
 Confirm New Password
 ```
 
-## 🔐 Password Change Flow
-
-``` text
-User
- │
- ▼
-Enter Current Password
- │
- ▼
-Enter New Password
- │
- ▼
-Confirm New Password
- │
- ▼
-Client-side Zod Validation
- │
- ▼
-POST /api/account/change-password
- │
- ▼
-Authenticate User
- │
- ▼
-Verify Current Password
- │
- ▼
-Hash New Password
- │
- ▼
-Update Database
- │
- ▼
-Invalidate Authentication
- │
- ▼
-Redirect to Sign In
-```
 
 ## 🛡️ Password Security
 
@@ -451,34 +306,6 @@ user requests deletion.
 
 Instead, the account enters a temporary recovery period.
 
-## 🔄 Account Deletion Flow
-
-``` text
-User Requests Account Deletion
-            │
-            ▼
-      OTP Generated
-            │
-            ▼
-      OTP Verification
-            │
-            ▼
-   Account Marked as Deleted
-            │
-            ▼
-     Recovery Period
-            │
-       ┌────┴────┐
-       │         │
-       ▼         ▼
-   Recover    Period Ends
-   Account        │
-                  ▼
-            Cron Cleanup
-                  │
-                  ▼
-        Permanent Deletion
-```
 
 ## 🔢 OTP Verification
 
@@ -510,27 +337,12 @@ Expired OTP records are removed from the database.
 
 After successful OTP verification, the account is marked for deletion.
 
-The following fields are updated:
-
-``` text
-isDeleted
-deletionRequestedAt
-deletionScheduledFor
-```
 
 During the recovery period, the user can cancel the deletion.
 
 ## ♻️ Account Recovery
 
 Users can recover their account before the scheduled deletion date.
-
-Recovery resets:
-
-``` text
-isDeleted = false
-deletionRequestedAt = null
-deletionScheduledFor = null
-```
 
 After recovery, the account becomes active again.
 
@@ -685,7 +497,7 @@ application.
 ## 1. Clone the Repository
 
 ``` bash
-git clone https://github.com/<your-username>/messonimous.git
+git clone https://github.com/ayaanshaikhhh/messonimous.git
 ```
 
 ## 2. Navigate to the Project
@@ -772,30 +584,6 @@ Important scenarios to test include:
 
 ------------------------------------------------------------------------
 
-# 🧪 API Testing with Postman
-
-Protected APIs can be tested using Postman.
-
-For the cleanup endpoint:
-
-``` http
-GET http://localhost:3000/api/delete-account/cleanup
-```
-
-Add the following header:
-
-``` http
-Authorization: Bearer YOUR_CRON_SECRET
-```
-
-An invalid or missing secret should return:
-
-``` text
-401 Unauthorized
-```
-
-------------------------------------------------------------------------
-
 # ⏰ Vercel Cron
 
 Messonimous uses Vercel Cron for permanent account cleanup.
@@ -862,7 +650,6 @@ Before deploying:
 
 Potential future improvements:
 
--   📧 Change email with verification
 -   🔐 Two-factor authentication
 -   📱 Session/device management
 -   🚦 API rate limiting
@@ -903,6 +690,11 @@ Current core functionality includes:
 
 **Full Stack Web Developer**
 
+## 🔗 Connect With Me
+
+- 💼 **LinkedIn** — https://www.linkedin.com/in/shaikh-ayaan-dev/
+- 🐙 **GitHub** — https://github.com/ayaanshaikhhh
+
 ### Tech Stack
 
 `React.js` • `TypeScript` • `Next.js` • `Node.js` • `MongoDB` •
@@ -912,7 +704,5 @@ Current core functionality includes:
 
 # 📄 License
 
-Messonimous is currently developed as a learning and portfolio project.
+Messonimous is currently developed as a open source project.
 
-A formal open-source license can be added if the project is later
-distributed publicly.

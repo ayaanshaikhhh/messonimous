@@ -117,12 +117,15 @@
 
 import ConnectDB from "@/lib/dbConnect";
 import UserModel from "@/models/User.model";
+import SessionModel from "@/models/Session.model";
+
+import { getSessionMetadata } from "@/lib/getSessionMetadata";
+
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
-import crypto from "crypto";
-import SessionModel from "@/models/Session.model";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -147,9 +150,9 @@ export const authOptions: NextAuthOptions = {
         await ConnectDB();
 
         try {
-          // --------------------------------------------------
-          // Validate credentials
-          // --------------------------------------------------
+          // ==================================================
+          // 1. Validate credentials
+          // ==================================================
 
           if (
             !credentials?.identifier ||
@@ -160,9 +163,9 @@ export const authOptions: NextAuthOptions = {
             );
           }
 
-          // --------------------------------------------------
-          // Find user
-          // --------------------------------------------------
+          // ==================================================
+          // 2. Find user by username or email
+          // ==================================================
 
           const user = await UserModel.findOne({
             $or: [
@@ -179,9 +182,9 @@ export const authOptions: NextAuthOptions = {
             throw new Error("No user found");
           }
 
-          // --------------------------------------------------
-          // Check password
-          // --------------------------------------------------
+          // ==================================================
+          // 3. Check password
+          // ==================================================
 
           const isPasswordCorrect =
             await bcrypt.compare(
@@ -193,9 +196,9 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Incorrect Password");
           }
 
-          // --------------------------------------------------
-          // Check account deletion status
-          // --------------------------------------------------
+          // ==================================================
+          // 4. Check account deletion status
+          // ==================================================
 
           if (user.isDeleted) {
             throw new Error(
@@ -203,11 +206,64 @@ export const authOptions: NextAuthOptions = {
             );
           }
 
-          // --------------------------------------------------
-          // Login successful
-          // --------------------------------------------------
+          // ==================================================
+          // 5. Generate unique session ID
+          // ==================================================
 
-          return user;
+          const sessionId =
+            crypto.randomUUID();
+
+          // ==================================================
+          // 6. Get session metadata
+          // ==================================================
+
+          const metadata =
+            await getSessionMetadata();
+
+          // ==================================================
+          // 7. Create session registry record
+          // ==================================================
+
+          await SessionModel.create({
+            userId: user._id,
+
+            sessionId,
+
+            device: metadata.device,
+            browser: metadata.browser,
+            operatingSystem:
+              metadata.operatingSystem,
+
+            ipAddress:
+              metadata.ipAddress,
+
+            userAgent:
+              metadata.userAgent,
+
+            lastActiveAt: new Date(),
+
+            expiresAt: new Date(
+              Date.now() +
+                30 *
+                  24 *
+                  60 *
+                  60 *
+                  1000,
+            ),
+
+            revokedAt: null,
+          });
+
+          // ==================================================
+          // 8. Return authenticated user
+          // ==================================================
+
+          return {
+            ...user.toObject(),
+
+            // Pass sessionId to JWT callback
+            sessionId,
+          };
         } catch (error) {
           console.error(
             "NEXTAUTH AUTHORIZE ERROR:",
@@ -227,7 +283,8 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       if (token) {
-        session.user._id = token._id;
+        session.user._id =
+          token._id;
 
         session.user.isVerified =
           token.isVerified;
@@ -238,6 +295,7 @@ export const authOptions: NextAuthOptions = {
         session.user.username =
           token.username;
 
+        // Account deletion
         session.user.isDeleted =
           token.isDeleted;
 
@@ -247,7 +305,7 @@ export const authOptions: NextAuthOptions = {
         session.user.deletionScheduledFor =
           token.deletionScheduledFor;
 
-        // ⭐ Our session registry ID
+        // Active session
         session.user.sessionId =
           token.sessionId;
       }
@@ -260,12 +318,10 @@ export const authOptions: NextAuthOptions = {
     // ======================================================
 
     async jwt({ token, user }) {
-      // ----------------------------------------------------
-      // Only execute this when the user actually signs in.
-      // ----------------------------------------------------
-
+      // This block runs when the user signs in.
       if (user) {
-        token._id = user._id?.toString();
+        token._id =
+          user._id?.toString();
 
         token.isVerified =
           user.isVerified;
@@ -276,6 +332,7 @@ export const authOptions: NextAuthOptions = {
         token.username =
           user.username;
 
+        // Account deletion
         token.isDeleted =
           user.isDeleted;
 
@@ -285,53 +342,34 @@ export const authOptions: NextAuthOptions = {
         token.deletionScheduledFor =
           user.deletionScheduledFor;
 
-        // --------------------------------------------------
-        // Generate unique session ID
-        // --------------------------------------------------
-
-        const sessionId =
-          crypto.randomUUID();
-
-        token.sessionId = sessionId;
-
-        // --------------------------------------------------
-        // Create session registry entry
-        // --------------------------------------------------
-
-        await SessionModel.create({
-          userId: user._id,
-
-          sessionId,
-
-          device: "Unknown Device",
-          browser: "Unknown Browser",
-          operatingSystem: "Unknown OS",
-
-          ipAddress: null,
-          userAgent: null,
-
-          lastActiveAt: new Date(),
-
-          expiresAt: new Date(
-            Date.now() +
-              30 * 24 * 60 * 60 * 1000,
-          ),
-
-          revokedAt: null,
-        });
+        // Active session
+        token.sessionId =
+          user.sessionId;
       }
 
       return token;
     },
   },
 
+  // ========================================================
+  // AUTH PAGES
+  // ========================================================
+
   pages: {
     signIn: "/sign-in",
   },
 
+  // ========================================================
+  // SESSION CONFIGURATION
+  // ========================================================
+
   session: {
     strategy: "jwt",
   },
+
+  // ========================================================
+  // SECRET
+  // ========================================================
 
   secret: process.env.NEXTAUTH_SECRET,
 };

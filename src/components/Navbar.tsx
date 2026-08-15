@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { User } from "next-auth";
-import { UserCircle, Mail, Trash2, LogOut, Loader2 } from "lucide-react";
+import { UserCircle, Mail, Trash2, LogOut, Loader2, Settings } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -155,6 +155,16 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuLabel>
 
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/settings")}
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Account Settings
+                </DropdownMenuItem>
+                
                 <DropdownMenuSeparator />
 
                 {/* Username */}

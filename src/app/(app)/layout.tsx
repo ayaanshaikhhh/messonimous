@@ -1,14 +1,17 @@
-import Navbar from "@/components/Navbar";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/options";
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <Navbar />
-      <main>{children}</main>
-    </>
-  );
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    redirect("/sign-in");
+  }
+
+  return <main>{children}</main>;
 }

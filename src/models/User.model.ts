@@ -19,7 +19,7 @@ const MessageSchema = new Schema(
   },
   {
     _id: true,
-  }
+  },
 );
 
 export interface User extends Document {
@@ -31,7 +31,7 @@ export interface User extends Document {
   isAcceptingMessage: boolean;
 
   messages: Message[];
-  
+
   // Password Reset
   resetPasswordToken: string | null;
   resetPasswordExpiry: Date | null;
@@ -40,6 +40,9 @@ export interface User extends Document {
   isDeleted: boolean;
   deletionRequestedAt: Date | null;
   deletionScheduledFor: Date | null;
+
+  // Username Change
+  usernameLastChangedAt: Date | null;
 }
 
 const UserSchema = new Schema(
@@ -49,6 +52,7 @@ const UserSchema = new Schema(
       required: [true, "Username is required"],
       trim: true,
       unique: true,
+      lowercase: true,
     },
 
     email: {
@@ -57,10 +61,7 @@ const UserSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [
-        /.+\@.+\..+/,
-        "Please provide a valid email address",
-      ],
+      match: [/.+\@.+\..+/, "Please provide a valid email address"],
     },
 
     password: {
@@ -109,14 +110,18 @@ const UserSchema = new Schema(
       default: null,
       index: true,
     },
+
+    usernameLastChangedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const UserModel: Model<User> =
-  mongoose.models.User ||
-  mongoose.model<User>("User", UserSchema);
+  mongoose.models.User || mongoose.model<User>("User", UserSchema);
 
 export default UserModel;

@@ -102,7 +102,7 @@ const SettingsPage = () => {
                 {/* Username */}
 
                 <Link
-                  href="/settings/username"
+                  href="/settings/change-username"
                   className="group flex items-center justify-between px-6 py-5 transition-colors hover:bg-slate-50"
                 >
                   <div className="flex min-w-0 items-center gap-4">

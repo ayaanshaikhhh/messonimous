@@ -30,7 +30,7 @@ const SettingsPage = () => {
           <Button
             variant="ghost"
             className="mb-4 cursor-pointer gap-2 text-slate-600 hover:text-slate-900"
-            onClick={() => router.back()}
+            onClick={() => router.replace("/dashboard")}
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -133,7 +133,7 @@ const SettingsPage = () => {
                 {/* Email */}
 
                 <Link
-                  href="/settings/email"
+                  href="/settings/change-email"
                   className="group flex items-center justify-between px-6 py-5 transition-colors hover:bg-slate-50"
                 >
                   <div className="flex min-w-0 items-center gap-4">

@@ -11,6 +11,8 @@ declare module "next-auth" {
     isDeleted?: boolean;
     deletionRequestedAt?: Date | null;
     deletionScheduledFor?: Date | null;
+
+    sessionId?: string;
   }
 
   interface Session {

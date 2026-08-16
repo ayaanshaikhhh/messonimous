@@ -35,22 +35,13 @@ export const authOptions: NextAuthOptions = {
         await ConnectDB();
 
         try {
-          // ==================================================
-          // 1. Validate credentials
-          // ==================================================
+          // Validate credentials
 
-          if (
-            !credentials?.identifier ||
-            !credentials?.password
-          ) {
-            throw new Error(
-              "Provide Username and Password",
-            );
+          if (!credentials?.identifier || !credentials?.password) {
+            throw new Error("Provide Username and Password");
           }
 
-          // ==================================================
-          // 2. Find user by username or email
-          // ==================================================
+        //  Find user by username or email
 
           const user = await UserModel.findOne({
             $or: [
@@ -67,73 +58,52 @@ export const authOptions: NextAuthOptions = {
             throw new Error("No user found");
           }
 
-          // ==================================================
-          // 3. Check password
-          // ==================================================
+          // Check password
 
-          const isPasswordCorrect =
-            await bcrypt.compare(
-              credentials.password,
-              user.password,
-            );
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials.password,
+            user.password,
+          );
 
           if (!isPasswordCorrect) {
             throw new Error("Incorrect Password");
           }
 
-          // ==================================================
-          // 4. Check account deletion status
-          // ==================================================
+          //  Check account deletion status
 
           if (user.isDeleted) {
-            throw new Error(
-              "ACCOUNT_SCHEDULED_FOR_DELETION",
-            );
+            throw new Error("ACCOUNT_SCHEDULED_FOR_DELETION");
           }
 
-          // ==================================================
-          // 5. Generate unique session ID
-          // ==================================================
+          //  Generate unique session ID
 
-          const sessionId =
-            crypto.randomUUID();
+          const sessionId = crypto.randomUUID();
 
-          // ==================================================
-          // 6. Get session metadata
-          // ==================================================
+          //  Get session metadata
 
-          const metadata =
-            await getSessionMetadata();
+          const metadata = await getSessionMetadata();
 
-          // ==================================================
-          // 7. Find active sessions
-          // ==================================================
+          //  Find active sessions
 
-          const activeSessions =
-            await SessionModel.find({
-              userId: user._id,
+          const activeSessions = await SessionModel.find({
+            userId: user._id,
 
-              // Only active sessions
-              revokedAt: null,
+            // Only active sessions
+            revokedAt: null,
 
-              // Ignore expired sessions
-              expiresAt: {
-                $gt: new Date(),
-              },
+            // Ignore expired sessions
+            expiresAt: {
+              $gt: new Date(),
+            },
+          })
+            .sort({
+              createdAt: 1,
             })
-              .sort({
-                createdAt: 1,
-              })
-              .select("_id sessionId");
+            .select("_id sessionId");
 
-          // ==================================================
           // 8. Enforce maximum active sessions
-          // ==================================================
 
-          if (
-            activeSessions.length >=
-            MAX_ACTIVE_SESSIONS
-          ) {
+          if (activeSessions.length >= MAX_ACTIVE_SESSIONS) {
             // Number of sessions that need to be revoked.
             //
             // Example:
@@ -143,23 +113,14 @@ export const authOptions: NextAuthOptions = {
             // 7 active + new login
             // 7 - 5 + 1 = 3
             const sessionsToRevoke =
-              activeSessions.length -
-              MAX_ACTIVE_SESSIONS +
-              1;
+              activeSessions.length - MAX_ACTIVE_SESSIONS + 1;
 
             // Because the sessions are sorted by
             // createdAt ascending, the first sessions
-            // are the oldest ones. 
-            const sessionsToRevokeIds =
-              activeSessions
-                .slice(
-                  0,
-                  sessionsToRevoke,
-                )
-                .map(
-                  (session) =>
-                    session._id,
-                );
+            // are the oldest ones.
+            const sessionsToRevokeIds = activeSessions
+              .slice(0, sessionsToRevoke)
+              .map((session) => session._id);
 
             await SessionModel.updateMany(
               {
@@ -175,9 +136,9 @@ export const authOptions: NextAuthOptions = {
             );
           }
 
-          // ==================================================
-          // 9. Create new session registry record
-          // ==================================================
+          //
+          //  Create new session registry record
+          //
 
           await SessionModel.create({
             userId: user._id,
@@ -186,36 +147,24 @@ export const authOptions: NextAuthOptions = {
 
             device: metadata.device,
 
-            browser:
-              metadata.browser,
+            browser: metadata.browser,
 
-            operatingSystem:
-              metadata.operatingSystem,
+            operatingSystem: metadata.operatingSystem,
 
-            ipAddress:
-              metadata.ipAddress,
+            ipAddress: metadata.ipAddress,
 
-            userAgent:
-              metadata.userAgent,
+            userAgent: metadata.userAgent,
 
-            lastActiveAt:
-              new Date(),
+            lastActiveAt: new Date(),
 
-            expiresAt: new Date(
-              Date.now() +
-                30 *
-                  24 *
-                  60 *
-                  60 *
-                  1000,
-            ),
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 
             revokedAt: null,
           });
 
-          // ==================================================
-          // 10. Return authenticated user
-          // ==================================================
+          //
+          // Return authenticated user
+          //
 
           return {
             ...user.toObject(),
@@ -225,10 +174,7 @@ export const authOptions: NextAuthOptions = {
             sessionId,
           };
         } catch (error) {
-          console.error(
-            "NEXTAUTH AUTHORIZE ERROR:",
-            error,
-          );
+          console.error("NEXTAUTH AUTHORIZE ERROR:", error);
 
           throw error;
         }
@@ -237,121 +183,79 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    // ======================================================
     // SESSION CALLBACK
-    // ======================================================
-
-    async session({
-      session,
-      token,
-    }) {
+    async session({ session, token }) {
       if (token) {
-        session.user._id =
-          token._id;
+        session.user._id = token._id;
 
-        session.user.isVerified =
-          token.isVerified;
+        session.user.isVerified = token.isVerified;
 
-        session.user.isAcceptingMessage =
-          token.isAcceptingMessage;
+        session.user.isAcceptingMessage = token.isAcceptingMessage;
 
-        session.user.username =
-          token.username;
+        session.user.username = token.username;
 
-        // ==================================================
+        //
         // Account deletion
-        // ==================================================
+        //
+        session.user.isDeleted = token.isDeleted;
 
-        session.user.isDeleted =
-          token.isDeleted;
+        session.user.deletionRequestedAt = token.deletionRequestedAt;
 
-        session.user.deletionRequestedAt =
-          token.deletionRequestedAt;
+        session.user.deletionScheduledFor = token.deletionScheduledFor;
 
-        session.user.deletionScheduledFor =
-          token.deletionScheduledFor;
-
-        // ==================================================
         // Active session
-        // ==================================================
 
-        session.user.sessionId =
-          token.sessionId;
+        session.user.sessionId = token.sessionId;
       }
 
       return session;
     },
 
-    // ======================================================
     // JWT CALLBACK
-    // ======================================================
 
-    async jwt({
-      token,
-      user,
-    }) {
+    async jwt({ token, user }) {
       // This block runs when the user signs in.
       if (user) {
-        // ==================================================
         // User information
-        // ==================================================
 
-        token._id =
-          user._id?.toString();
+        token._id = user._id?.toString();
 
-        token.isVerified =
-          user.isVerified;
+        token.isVerified = user.isVerified;
 
-        token.isAcceptingMessage =
-          user.isAcceptingMessage;
+        token.isAcceptingMessage = user.isAcceptingMessage;
 
-        token.username =
-          user.username;
+        token.username = user.username;
 
-        // ==================================================
         // Account deletion
-        // ==================================================
 
-        token.isDeleted =
-          user.isDeleted;
+        token.isDeleted = user.isDeleted;
 
-        token.deletionRequestedAt =
-          user.deletionRequestedAt;
+        token.deletionRequestedAt = user.deletionRequestedAt;
 
-        token.deletionScheduledFor =
-          user.deletionScheduledFor;
+        token.deletionScheduledFor = user.deletionScheduledFor;
 
-        // ==================================================
         // Active session
-        // ==================================================
 
-        token.sessionId =
-          user.sessionId;
+        token.sessionId = user.sessionId;
       }
 
       return token;
     },
   },
 
-  // ========================================================
   // AUTH PAGES
-  // ========================================================
 
   pages: {
     signIn: "/sign-in",
   },
 
-  // ========================================================
   // SESSION CONFIGURATION
-  // ========================================================
 
   session: {
     strategy: "jwt",
   },
 
-  // ========================================================
   // SECRET
-  // ========================================================
 
   secret: process.env.NEXTAUTH_SECRET,
 };

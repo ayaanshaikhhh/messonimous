@@ -76,10 +76,9 @@ const SecurityPage = () => {
           <div className="rounded-2xl bg-white p-6 shadow-sm">
             <ActiveSessions/>
             <div className="flex items-center justify-between gap-4">
-
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>

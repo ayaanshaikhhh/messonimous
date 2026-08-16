@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, LockKeyhole } from "lucide-react";
 
+import ActiveSessions from "@/app/(app)/settings/ActiveSessions"
+
 import { Button } from "@/components/ui/button";
 
 const SecurityPage = () => {
@@ -70,45 +72,10 @@ const SecurityPage = () => {
             </div>
           </div>
 
-          {/* Active Sessions - Future */}
+          {/* Active Sessions  */}
           <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <ActiveSessions/>
             <div className="flex items-center justify-between gap-4">
-
-              <div>
-                <h2 className="font-semibold text-slate-900">
-                  Active Sessions
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  Manage devices currently signed in to your account.
-                </p>
-              </div>
-
-              <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">
-                Coming Soon
-              </span>
-
-            </div>
-          </div>
-
-          {/* Login Activity - Future */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-
-              <div>
-                <h2 className="font-semibold text-slate-900">
-                  Login Activity
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  Review recent login activity on your account.
-                </p>
-              </div>
-
-              <span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-500">
-                Coming Soon
-              </span>
-
             </div>
           </div>
 

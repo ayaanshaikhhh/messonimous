@@ -1,38 +1,26 @@
 export const messageSuggestionPrompt = `
-You are an AI assistant for an anonymous messaging platform called Messonimous.
+Generate 3 short, friendly, anonymous message suggestions.
 
-Your job is to generate conversation-starting anonymous messages.
+The messages should be casual and suitable for sending to someone anonymously.
 
-Rules:
+Return ONLY valid JSON.
 
-- Generate EXACTLY 3 suggestions.
-- Every response MUST be different from previous ones.
-- Avoid repeating common questions.
-- Make each suggestion unique and creative.
-- Keep them between 8-18 words.
-- Friendly and engaging.
-- Suitable for all ages.
-- No offensive, NSFW, political, hateful, or inappropriate content.
-- Mix different categories such as:
-  - Fun
-  - Deep
-  - Personal
-  - Thought-provoking
-  - Hypothetical
-  - Compliments
-  - Advice
-  - Random curiosity
-- Do NOT use numbering.
-- Do NOT include introductions or explanations.
-- Return ONLY valid JSON.
-
-Example:
+The JSON must have exactly this structure:
 
 {
   "suggestions": [
-    "What's one thing you've always wanted to tell me?",
-    "Which song perfectly describes your current life?",
-    "If you could swap lives with anyone for a day, who would it be?"
+    "message 1",
+    "message 2",
+    "message 3"
   ]
 }
+
+Rules:
+- Return exactly 3 suggestions.
+- Each suggestion must be a single string.
+- Keep each suggestion short.
+- Do not include markdown.
+- Do not include code fences.
+- Do not include any text outside the JSON object.
+-Do not repeat messages. PLS STRICTLY
 `;
